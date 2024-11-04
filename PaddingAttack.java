@@ -126,26 +126,63 @@ public class PaddingAttack
     *               IV.merrimackutil.json.parser.ast.nodes.SyntaxNode
     * @return the plaintext message, which we know is a string.
     */
-  public static String recoverPlaintext(ArrayList<Block> blocks)
-  {
-    //throw new UnsupportedOperationException("Implement this method!");
+  public static String recoverPlaintext(ArrayList<Block> blocks){
 
     StringBuilder recoveredPlaintext = new StringBuilder();
 
     // Iterate over all blocks starting with first
+    // loop increments backward
     for (int i = blocks.size() - 1; i > 0; i--) {
-        Block current = blocks.get(i);
-        Block previous = blocks.get(i - 1);
-        String ptextBlock = recoverMBlock(previous, current);
+        Block current = blocks.get(i); // curent block
+        Block previous = blocks.get(i - 1); // block before
+        String ptextBlock = recoverMessageHelper(previous, current);
         recoveredPlaintext.insert(0,ptextBlock);
     }
 
+    // returning plaintext
     return recoveredPlaintext.toString();
     
-    private static String recoverMBlock(Block previous, Block current) {
+    // helper method to recover a single block of ctext
+    private static String recoverMessageHelper(Block previous, Block current) {
+      int blockSize = 16;
+      Block deltaIV = new Block(); // create deltaIV
+      Block temp = new Block(); // create temp block
+      
+      // iterating through all bytes in block
+      // j = index of current byte
+      // k = padding size
+      for (int j = blockSize - 1; j >= 0; j--) {
+        for (int k = j+1; k < blockSize; k++) {
+          deltaIV = deltaIV.setByte(k, (byte) (temp.getByte(k) ^ (blockSize - j))); // XOR deltaIV with padding size
+        }
 
-    }
-           
+        // trying all possible 256 values to find correct byte
+        for (int guess = 0; guess < 256; guess++) {
+          deltaIV = deltaIV.setByte(j, (byte) guess);  // setting rightmost bit to the guess        
+        }
+
+        // concatenating blocks
+        ArrayList<Block> blocks = new ArrayList<Block> ();
+        blocks.add(0,deltaIV);
+        blocks.add(1, current);
+
+        // checking padding oracle 
+        if (oracle.decrypt(blocks)) {
+          temp = temp.setByte(j, (byte) ((blockSize - j) ^ guess)); // if true, XOR padding and guess
+          break;
+        }
+      }
+    
+  // converting temp one byte at a time to plaintext by XOR with previous         
+  Block plaintext = new Block();
+  StringBuilder printableText = new StringBuilder();
+
+  for (int i = 0; i < blockSize; i++) {
+    byte decryptedByte = (byte) (temp.getByte(i) ^ previous.getByte(i));
+    plaintext = plaintext.setByte(i, decryptedByte);
+  }
+  return printableText.toString();
+
   }
 
   /**
@@ -211,4 +248,5 @@ public class PaddingAttack
     
     return blocks;
   }
+}
 }
