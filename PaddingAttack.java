@@ -23,6 +23,7 @@ import merrimackutil.util.Tuple;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Base64;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -127,7 +128,24 @@ public class PaddingAttack
     */
   public static String recoverPlaintext(ArrayList<Block> blocks)
   {
-    throw new UnsupportedOperationException("Implement this method!");
+    //throw new UnsupportedOperationException("Implement this method!");
+
+    StringBuilder recoveredPlaintext = new StringBuilder();
+
+    // Iterate over all blocks starting with first
+    for (int i = blocks.size() - 1; i > 0; i--) {
+        Block current = blocks.get(i);
+        Block previous = blocks.get(i - 1);
+        String ptextBlock = recoverMBlock(previous, current);
+        recoveredPlaintext.insert(0,ptextBlock);
+    }
+
+    return recoveredPlaintext.toString();
+    
+    private static String recoverMBlock(Block previous, Block current) {
+
+    }
+           
   }
 
   /**
