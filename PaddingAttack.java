@@ -135,7 +135,7 @@ public class PaddingAttack
     for (int i = blocks.size() - 1; i > 0; i--) {
         Block current = blocks.get(i); // curent block
         Block previous = blocks.get(i - 1); // block before
-        String ptextBlock = recoverMessageHelper(previous, current);
+        String ptextBlock = recoverMessageHelper(previous, current); 
         recoveredPlaintext.insert(0,ptextBlock);
     }
 
@@ -178,12 +178,13 @@ public class PaddingAttack
   StringBuilder printableText = new StringBuilder();
 
   for (int i = 0; i < blockSize; i++) {
-    byte decryptedByte = (byte) (temp.getByte(i) ^ previous.getByte(i));
-    plaintext = plaintext.setByte(i, decryptedByte);
+    byte decByte = (byte) (temp.getByte(i) ^ previous.getByte(i));
+    plaintext = plaintext.setByte(i, decByte);
   }
   return printableText.toString();
 
   }
+}
 
   /**
    * The entrypoint for the application. This starts the attack. 
