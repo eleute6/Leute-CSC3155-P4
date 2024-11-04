@@ -159,7 +159,7 @@ public class PaddingAttack
         // trying all possible 256 values to find correct byte
         for (int guess = 0; guess < 256; guess++) {
           deltaIV = deltaIV.setByte(j, (byte) guess);  // setting rightmost bit to the guess        
-        }
+        
 
         // concatenating blocks
         ArrayList<Block> blocks = new ArrayList<Block> ();
@@ -172,6 +172,7 @@ public class PaddingAttack
           break;
         }
       }
+    }
     
   // converting temp one byte at a time to plaintext by XOR with previous         
   Block plaintext = new Block();
