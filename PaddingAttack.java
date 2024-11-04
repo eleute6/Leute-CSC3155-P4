@@ -141,6 +141,8 @@ public class PaddingAttack
 
     // returning plaintext
     return recoveredPlaintext.toString();
+
+  }
     
     // helper method to recover a single block of ctext
     private static String recoverMessageHelper(Block previous, Block current) {
@@ -184,8 +186,8 @@ public class PaddingAttack
   }
   return printableText.toString();
 
-  }
 }
+
 
   /**
    * The entrypoint for the application. This starts the attack. 
@@ -251,4 +253,4 @@ public class PaddingAttack
     return blocks;
   }
 }
-}
+
